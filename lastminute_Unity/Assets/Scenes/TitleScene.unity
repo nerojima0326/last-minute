@@ -476,7 +476,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC0B4\uC544\uB0A8\uACE0\n\uBC84\uD2F0\uC138\uC694"
+  m_text: 'LAST
+
+    MINUTE'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 356f2737f45a96e4c86d2f73479aa894, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 7192a3fd07c6e384f94693d2b8907f21, type: 2}
