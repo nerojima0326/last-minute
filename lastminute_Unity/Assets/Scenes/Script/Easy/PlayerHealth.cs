@@ -62,7 +62,18 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("★ 플레이어 사망! 게임 오버 ★");
-        gameObject.SetActive(false);
+
+        // =======================================================
+        // [★추가된 부분] 맵에 있는 GameTimer를 찾아 패배 함수를 실행합니다.
+        // =======================================================
+        GameTimer timer = FindObjectOfType<GameTimer>();
+        if (timer != null)
+        {
+            timer.LoseGame(); // GameTimer의 시간 정지 및 패배 패널 켜기 실행
+        }
+        // =======================================================
+
+        gameObject.SetActive(false); // 플레이어 오브젝트 숨기기
     }
 
     // ★ 중요: OnCollisionStay2D를 OnCollisionEnter2D로 바꾸고, Destroy 코드를 추가했습니다!

@@ -1,10 +1,14 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.InputSystem; // 새로운 입력 시스템 사용
 
 public class PlayerShooting : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public float bulletSpeed = 15f; // 총알 속도
+
+    [Header("연사 속도 제한 (쿨타임)")]
+    public float fireRate = 0.2f;    // [★조절가능] 다음 총알이 나갈 때까지의 시간 (0.2초에 1발)
+    private float cooldownTimer = 0f; // 쿨타임을 실시간으로 계산할 변수
 
     [Header("사운드 설정")]
     public AudioClip gunshotSound;   // 재생할 총소리 파일 (.wav)
@@ -20,14 +24,25 @@ public class PlayerShooting : MonoBehaviour
     {
         if (Mouse.current == null) return;
 
-        // 마우스 왼쪽 버튼을 누른 바로 그 프레임에만 Shoot 함수 실행
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        // 1. 매 프레임마다 쿨타임 타이머를 실시간으로 줄여줍니다.
+        if (cooldownTimer > 0)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+
+        // 2. 마우스 왼쪽 버튼을 눌렀고, 동시에 '쿨타임이 0 이하'일 때만 Shoot 함수 실행
+        if (Mouse.current.leftButton.wasPressedThisFrame && cooldownTimer <= 0f)
+        {
             Shoot();
+
+            // 총을 쐈으므로 설정한 연사 속도만큼 쿨타임을 다시 충전합니다.
+            cooldownTimer = fireRate;
+        }
     }
 
     void Shoot()
     {
-        // [추가] 총을 쏠 때 총소리를 재생하는 함수 호출
+        // 총을 쏠 때 총소리를 재생하는 함수 호출
         PlayGunshot();
 
         if (bulletPrefab == null) return;
@@ -50,7 +65,7 @@ public class PlayerShooting : MonoBehaviour
             bulletScript.SetDirection(shootDirection, bulletSpeed);
     }
 
-    // [추가] 오디오 소스와 오디오 클립이 잘 연결되어 있으면 소리를 재생하는 함수
+    // 오디오 소스와 오디오 클립이 잘 연결되어 있으면 소리를 재생하는 함수
     void PlayGunshot()
     {
         if (audioSource != null && gunshotSound != null)

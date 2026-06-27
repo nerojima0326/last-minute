@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyChase
   easySpeed: 3
   normalSpeed: 7
-  hardcoreSpeed: 20
+  hardcoreSpeed: 100
 --- !u!95 &2042191472507525347
 Animator:
   serializedVersion: 7

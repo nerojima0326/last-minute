@@ -3,9 +3,9 @@ using UnityEngine;
 public class EnemyChase : MonoBehaviour
 {
     [Header("난이도별 속도 설정 (여기서 직접 조절하세요!)")]
-    public float easySpeed = 2.0f;     // Easy 난이도 속도
-    public float normalSpeed = 3.0f;   // Normal 난이도 속도
-    public float hardcoreSpeed = 5.0f; // Hardcore 난이도 속도
+    public float easySpeed = 0.5f;     // Easy 난이도 속도
+    public float normalSpeed = 2.5f;   // Normal 난이도 속도
+    public float hardcoreSpeed = 30f;  // Hardcore 난이도 속도
 
     private float currentSpeed;        // 게임 시작 시 최종적으로 적용될 실제 속도
 
@@ -24,22 +24,25 @@ public class EnemyChase : MonoBehaviour
         // 2. 좀비 자신의 SpriteRenderer 컴포넌트를 가져옵니다.
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // 3. 아까 저장했던 난이도 데이터를 불러옵니다. (기본값은 "Easy")
-        string difficulty = PlayerPrefs.GetString("SelectedDifficulty", "Easy");
+        // ==========================================================
+        // [★수정된 부분] 다른 코드들과 똑같이 GameSettings 숫자로 통일합니다!
+        // ==========================================================
+        int difficulty = GameSettings.currentDifficulty;
 
-        // 4. 유니티 인스펙터에서 설정한 각 난이도별 속도를 적용합니다.
-        if (difficulty == "Easy")
+        // 4. 숫자 값(0: 이지, 1: 노말, 2: 하드코어)에 따라 속도를 매칭합니다.
+        if (difficulty == 0)
         {
             currentSpeed = easySpeed;
         }
-        else if (difficulty == "Normal")
+        else if (difficulty == 1)
         {
             currentSpeed = normalSpeed;
         }
-        else if (difficulty == "Hardcore")
+        else if (difficulty == 2)
         {
             currentSpeed = hardcoreSpeed;
         }
+        // ==========================================================
     }
 
     void Update()

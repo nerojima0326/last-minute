@@ -11,6 +11,16 @@ public class PlayerMovement2D : MonoBehaviour
     public float paddingX = 0.5f;
     public float paddingY = 0.5f;
 
+    private SpriteRenderer spriteRenderer;
+    private Animator anim;
+
+    void Start()
+    {
+        // 게임 시작될 때 내 플레이어에 있는 컴포넌트들을 가져옵니다.
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
+    }
+
     void Update()
     {
         // 1. 키보드 입력 및 이동 처리
@@ -27,18 +37,46 @@ public class PlayerMovement2D : MonoBehaviour
         Vector2 moveDirection = new Vector2(moveX, moveY).normalized;
         transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
 
+        // ==========================================
+        // [수정된 부분] 좌우 반전 처리 (원본이 왼쪽을 보는 이미지일 때)
+        // ==========================================
+        if (spriteRenderer != null)
+        {
+            if (moveX < 0)
+            {
+                spriteRenderer.flipX = false; // 왼쪽(A키)으로 가면 원본 유지 (왼쪽 봄)
+            }
+            else if (moveX > 0)
+            {
+                spriteRenderer.flipX = true;  // 오른쪽(D키)으로 가면 이미지 뒤집기 (오른쪽 봄)
+            }
+        }
+
+        // 달리기/대기 애니메이션 전환
+        if (anim != null)
+        {
+            if (moveX != 0 || moveY != 0)
+            {
+                anim.SetBool("isRun", true);  // 달리기 애니메이션 켜기
+            }
+            else
+            {
+                anim.SetBool("isRun", false); // 아무것도 안 누르면 대기 상태로
+            }
+        }
+        // ==========================================
+
         // 2. ★ 카메라 화면 밖으로 나가지 못하게 가두기 (Clamp) ★
         LockInCameraView();
     }
 
     void LockInCameraView()
     {
-        // 메인 카메라가 없는 경우 에러 방지
         if (Camera.main == null) return;
 
         // 카메라의 시야 크기 계산하기
-        float camHeight = Camera.main.orthographicSize;                  // 카메라 세로 크기의 절반
-        float camWidth = camHeight * Camera.main.aspect;                 // 카메라 가로 크기의 절반 (세로 * 화면 비율)
+        float camHeight = Camera.main.orthographicSize;
+        float camWidth = camHeight * Camera.main.aspect;
 
         // 카메라의 현재 중심 위치 가져오기
         Vector3 camPos = Camera.main.transform.position;
@@ -52,7 +90,7 @@ public class PlayerMovement2D : MonoBehaviour
         // 플레이어의 현재 위치 가져오기
         Vector3 currentPos = transform.position;
 
-        // Mathf.Clamp(현재값, 최소값, 최대값)을 이용해 범위를 벗어나면 최소/최대값으로 고정시킵니다.
+        // Mathf.Clamp를 이용해 범위를 벗어나면 최소/최대값으로 고정시킵니다.
         currentPos.x = Mathf.Clamp(currentPos.x, minX, maxX);
         currentPos.y = Mathf.Clamp(currentPos.y, minY, maxY);
 
