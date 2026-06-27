@@ -4,7 +4,17 @@ using UnityEngine.InputSystem;
 public class PlayerShooting : MonoBehaviour
 {
     public GameObject bulletPrefab;
-    public float bulletSpeed = 15f; // 총알 속도 (조금 더 시원하게 올렸습니다)
+    public float bulletSpeed = 15f; // 총알 속도
+
+    [Header("사운드 설정")]
+    public AudioClip gunshotSound;   // 재생할 총소리 파일 (.wav)
+    private AudioSource audioSource; // 오디오를 재생할 스피커 컴포넌트
+
+    void Start()
+    {
+        // 플레이어 오브젝트에 있는 Audio Source 컴포넌트를 자동으로 가져옵니다.
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void Update()
     {
@@ -17,6 +27,9 @@ public class PlayerShooting : MonoBehaviour
 
     void Shoot()
     {
+        // [추가] 총을 쏠 때 총소리를 재생하는 함수 호출
+        PlayGunshot();
+
         if (bulletPrefab == null) return;
 
         // 1. 마우스 화면 좌표를 게임 세상의 정확한 2D 좌표로 변환
@@ -35,5 +48,15 @@ public class PlayerShooting : MonoBehaviour
         Bullet2D bulletScript = bullet.GetComponent<Bullet2D>();
         if (bulletScript != null)
             bulletScript.SetDirection(shootDirection, bulletSpeed);
+    }
+
+    // [추가] 오디오 소스와 오디오 클립이 잘 연결되어 있으면 소리를 재생하는 함수
+    void PlayGunshot()
+    {
+        if (audioSource != null && gunshotSound != null)
+        {
+            // PlayOneShot을 쓰면 이전 총소리가 끝나기 전에 또 쏴도 소리가 자연스럽게 겹쳐서 납니다!
+            audioSource.PlayOneShot(gunshotSound);
+        }
     }
 }
